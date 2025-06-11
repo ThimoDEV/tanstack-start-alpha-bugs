@@ -19,6 +19,13 @@
   "workbench.tree.expandMode": "singleClick",
   "workbench.tree.indent": 25,
 
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+
   // ========== Editor ==========
   "debug.onTaskErrors": "debugAnyway",
   "diffEditor.ignoreTrimWhitespace": false,
@@ -47,6 +54,7 @@
   "workbench.editor.limit.perEditorGroup": true,
   "workbench.editor.limit.value": 5,
   "search.exclude": {
+    "**/routeTree.gen.ts": true,
     "**/*.snap": true,
     "**/*.svg": true,
     "**/.git": true,
