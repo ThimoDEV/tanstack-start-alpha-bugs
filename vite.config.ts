@@ -13,6 +13,7 @@ export default defineConfig({
     tanstackStart({
       tsr: {
         tmpDir: '.tmp-tsr',
+        verboseFileRoutes: true
       },
     }),
   ],

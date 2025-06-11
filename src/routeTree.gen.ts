@@ -11,13 +11,19 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRouteImport } from './routes/test'
 import { Route as HiRouteImport } from './routes/hi'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TestBlaRouteImport } from './routes/test/bla'
+import { Route as TestFooRouteImport } from './routes/test/foo'
 import { ServerRoute as HelloServerRouteImport } from './routes/hello'
 
 const rootServerRouteImport = createServerRootRoute()
 
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HiRoute = HiRouteImport.update({
   id: '/hi',
   path: '/hi',
@@ -28,10 +34,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestBlaRoute = TestBlaRouteImport.update({
-  id: '/test/bla',
-  path: '/test/bla',
-  getParentRoute: () => rootRouteImport,
+const TestFooRoute = TestFooRouteImport.update({
+  id: '/foo',
+  path: '/foo',
+  getParentRoute: () => TestRoute,
 } as any)
 const HelloServerRoute = HelloServerRouteImport.update({
   id: '/hello',
@@ -42,31 +48,34 @@ const HelloServerRoute = HelloServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/hi': typeof HiRoute
-  '/test/bla': typeof TestBlaRoute
+  '/test': typeof TestRouteWithChildren
+  '/test/foo': typeof TestFooRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/hi': typeof HiRoute
-  '/test/bla': typeof TestBlaRoute
+  '/test': typeof TestRouteWithChildren
+  '/test/foo': typeof TestFooRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/hi': typeof HiRoute
-  '/test/bla': typeof TestBlaRoute
+  '/test': typeof TestRouteWithChildren
+  '/test/foo': typeof TestFooRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/hi' | '/test/bla'
+  fullPaths: '/' | '/hi' | '/test' | '/test/foo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/hi' | '/test/bla'
-  id: '__root__' | '/' | '/hi' | '/test/bla'
+  to: '/' | '/hi' | '/test' | '/test/foo'
+  id: '__root__' | '/' | '/hi' | '/test' | '/test/foo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HiRoute: typeof HiRoute
-  TestBlaRoute: typeof TestBlaRoute
+  TestRoute: typeof TestRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
   '/hello': typeof HelloServerRoute
@@ -92,6 +101,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hi': {
       id: '/hi'
       path: '/hi'
@@ -106,12 +122,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/bla': {
-      id: '/test/bla'
-      path: '/test/bla'
-      fullPath: '/test/bla'
-      preLoaderRoute: typeof TestBlaRouteImport
-      parentRoute: typeof rootRouteImport
+    '/test/foo': {
+      id: '/test/foo'
+      path: '/foo'
+      fullPath: '/test/foo'
+      preLoaderRoute: typeof TestFooRouteImport
+      parentRoute: typeof TestRoute
     }
   }
 }
@@ -127,10 +143,20 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface TestRouteChildren {
+  TestFooRoute: typeof TestFooRoute
+}
+
+const TestRouteChildren: TestRouteChildren = {
+  TestFooRoute: TestFooRoute,
+}
+
+const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HiRoute: HiRoute,
-  TestBlaRoute: TestBlaRoute,
+  TestRoute: TestRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
