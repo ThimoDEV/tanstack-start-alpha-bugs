@@ -19,9 +19,7 @@
   "workbench.tree.expandMode": "singleClick",
   "workbench.tree.indent": 25,
 
-  "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
-  },
+  "files.readonlyInclude": {},
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true
   },
