@@ -14,7 +14,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as HiRouteImport } from './routes/hi'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TestFooRouteImport } from './routes/test/foo'
+import { Route as HiFooRouteImport } from './routes/hi/foo'
+import { Route as HiBlaRouteImport } from './routes/hi/bla'
 import { ServerRoute as HelloServerRouteImport } from './routes/hello'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -34,10 +35,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestFooRoute = TestFooRouteImport.update({
+const HiFooRoute = HiFooRouteImport.update({
   id: '/foo',
   path: '/foo',
-  getParentRoute: () => TestRoute,
+  getParentRoute: () => HiRoute,
+} as any)
+const HiBlaRoute = HiBlaRouteImport.update({
+  id: '/bla',
+  path: '/bla',
+  getParentRoute: () => HiRoute,
 } as any)
 const HelloServerRoute = HelloServerRouteImport.update({
   id: '/hello',
@@ -47,35 +53,38 @@ const HelloServerRoute = HelloServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/hi': typeof HiRoute
-  '/test': typeof TestRouteWithChildren
-  '/test/foo': typeof TestFooRoute
+  '/hi': typeof HiRouteWithChildren
+  '/test': typeof TestRoute
+  '/hi/bla': typeof HiBlaRoute
+  '/hi/foo': typeof HiFooRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/hi': typeof HiRoute
-  '/test': typeof TestRouteWithChildren
-  '/test/foo': typeof TestFooRoute
+  '/hi': typeof HiRouteWithChildren
+  '/test': typeof TestRoute
+  '/hi/bla': typeof HiBlaRoute
+  '/hi/foo': typeof HiFooRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/hi': typeof HiRoute
-  '/test': typeof TestRouteWithChildren
-  '/test/foo': typeof TestFooRoute
+  '/hi': typeof HiRouteWithChildren
+  '/test': typeof TestRoute
+  '/hi/bla': typeof HiBlaRoute
+  '/hi/foo': typeof HiFooRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/hi' | '/test' | '/test/foo'
+  fullPaths: '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/hi' | '/test' | '/test/foo'
-  id: '__root__' | '/' | '/hi' | '/test' | '/test/foo'
+  to: '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
+  id: '__root__' | '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  HiRoute: typeof HiRoute
-  TestRoute: typeof TestRouteWithChildren
+  HiRoute: typeof HiRouteWithChildren
+  TestRoute: typeof TestRoute
 }
 export interface FileServerRoutesByFullPath {
   '/hello': typeof HelloServerRoute
@@ -122,12 +131,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/foo': {
-      id: '/test/foo'
+    '/hi/foo': {
+      id: '/hi/foo'
       path: '/foo'
-      fullPath: '/test/foo'
-      preLoaderRoute: typeof TestFooRouteImport
-      parentRoute: typeof TestRoute
+      fullPath: '/hi/foo'
+      preLoaderRoute: typeof HiFooRouteImport
+      parentRoute: typeof HiRoute
+    }
+    '/hi/bla': {
+      id: '/hi/bla'
+      path: '/bla'
+      fullPath: '/hi/bla'
+      preLoaderRoute: typeof HiBlaRouteImport
+      parentRoute: typeof HiRoute
     }
   }
 }
@@ -143,20 +159,22 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
-interface TestRouteChildren {
-  TestFooRoute: typeof TestFooRoute
+interface HiRouteChildren {
+  HiBlaRoute: typeof HiBlaRoute
+  HiFooRoute: typeof HiFooRoute
 }
 
-const TestRouteChildren: TestRouteChildren = {
-  TestFooRoute: TestFooRoute,
+const HiRouteChildren: HiRouteChildren = {
+  HiBlaRoute: HiBlaRoute,
+  HiFooRoute: HiFooRoute,
 }
 
-const TestRouteWithChildren = TestRoute._addFileChildren(TestRouteChildren)
+const HiRouteWithChildren = HiRoute._addFileChildren(HiRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  HiRoute: HiRoute,
-  TestRoute: TestRouteWithChildren,
+  HiRoute: HiRouteWithChildren,
+  TestRoute: TestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
