@@ -11,39 +11,21 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestRouteImport } from './routes/test'
-import { Route as HiRouteImport } from './routes/hi'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HiFooRouteImport } from './routes/hi/foo'
-import { Route as HiBlaRouteImport } from './routes/hi/bla'
 import { ServerRoute as HelloServerRouteImport } from './routes/hello'
 
 const rootServerRouteImport = createServerRootRoute()
 
-const TestRoute = TestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HiRoute = HiRouteImport.update({
-  id: '/hi',
-  path: '/hi',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HiFooRoute = HiFooRouteImport.update({
-  id: '/foo',
-  path: '/foo',
-  getParentRoute: () => HiRoute,
-} as any)
-const HiBlaRoute = HiBlaRouteImport.update({
-  id: '/bla',
-  path: '/bla',
-  getParentRoute: () => HiRoute,
+  id: '/hi/foo',
+  path: '/hi/foo',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HelloServerRoute = HelloServerRouteImport.update({
   id: '/hello',
@@ -53,38 +35,28 @@ const HelloServerRoute = HelloServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/hi': typeof HiRouteWithChildren
-  '/test': typeof TestRoute
-  '/hi/bla': typeof HiBlaRoute
   '/hi/foo': typeof HiFooRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/hi': typeof HiRouteWithChildren
-  '/test': typeof TestRoute
-  '/hi/bla': typeof HiBlaRoute
   '/hi/foo': typeof HiFooRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/hi': typeof HiRouteWithChildren
-  '/test': typeof TestRoute
-  '/hi/bla': typeof HiBlaRoute
   '/hi/foo': typeof HiFooRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
+  fullPaths: '/' | '/hi/foo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
-  id: '__root__' | '/' | '/hi' | '/test' | '/hi/bla' | '/hi/foo'
+  to: '/' | '/hi/foo'
+  id: '__root__' | '/' | '/hi/foo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  HiRoute: typeof HiRouteWithChildren
-  TestRoute: typeof TestRoute
+  HiFooRoute: typeof HiFooRoute
 }
 export interface FileServerRoutesByFullPath {
   '/hello': typeof HelloServerRoute
@@ -110,20 +82,6 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hi': {
-      id: '/hi'
-      path: '/hi'
-      fullPath: '/hi'
-      preLoaderRoute: typeof HiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -133,17 +91,10 @@ declare module '@tanstack/react-router' {
     }
     '/hi/foo': {
       id: '/hi/foo'
-      path: '/foo'
+      path: '/hi/foo'
       fullPath: '/hi/foo'
       preLoaderRoute: typeof HiFooRouteImport
-      parentRoute: typeof HiRoute
-    }
-    '/hi/bla': {
-      id: '/hi/bla'
-      path: '/bla'
-      fullPath: '/hi/bla'
-      preLoaderRoute: typeof HiBlaRouteImport
-      parentRoute: typeof HiRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -159,22 +110,9 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
-interface HiRouteChildren {
-  HiBlaRoute: typeof HiBlaRoute
-  HiFooRoute: typeof HiFooRoute
-}
-
-const HiRouteChildren: HiRouteChildren = {
-  HiBlaRoute: HiBlaRoute,
-  HiFooRoute: HiFooRoute,
-}
-
-const HiRouteWithChildren = HiRoute._addFileChildren(HiRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  HiRoute: HiRouteWithChildren,
-  TestRoute: TestRoute,
+  HiFooRoute: HiFooRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
